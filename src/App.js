@@ -6,9 +6,6 @@ import { Button } from 'reactstrap';
 import AutosizeTextarea from 'react-textarea-autosize';
 import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
-import dataAcao from '../src/scripts/redes/acao.json';
-import dataCausa from '../src/scripts/redes/causa.json';
-import dataFato from '../src/scripts/redes/fato.json';
 
 
 function App() {
