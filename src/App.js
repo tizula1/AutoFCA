@@ -83,7 +83,7 @@ function App() {
       multiple: true,
       source: function (request, response) {
         $.ajax({
-          url: "https://tizula1.github.io/auto-fca/redes/acao.json", // Substitua por sua URL
+          url: "https://tizula1.github.io/auto-fca/redes/acao.json",
           dataType: "json",
           data: {
             term: extractLast(request.term)
