@@ -1,11 +1,4 @@
-.divFca {
-  position: absolute;
-  width: 70%;
-  height: 50%;
-  left: 50%;
-  transform: translate( -50%);
 
-}
 .textarea {
   padding: 5px;
   width: 98.5%;
@@ -14,21 +7,10 @@
 }
 .divPrincipal{
   display: flex;
+  align-items: center;
 }
-.divDir{
-  width: 75%;
-}
-.divEsq{
-  width: 25%;
-  padding-right: 10px;
-  resize: none;
-}
+
 .divCenario {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 100%;
-  height: auto; 
   border: 1px solid #ccc;
   border-radius: 10px;
 }
@@ -50,7 +32,6 @@
   border-radius: 10px;
   margin: 5px;
   max-width: 50%;
-  
 }
 
 .botaoCenario{
@@ -77,10 +58,19 @@
   padding: 5px;
   border-radius: 10px;
 }
-
-.header{
-  text-align: center;
+.container{
+  border: 1px solid #ccc;
+  padding: 5px;
+  border-radius: 10px;
 }
+.header {
+  text-align: center;
+  object-fit: cover;
+}
+.imgHeader{
+  width: 50%;
+}
+
 
 .divButton{
   padding: 10px;
