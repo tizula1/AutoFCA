@@ -6,6 +6,7 @@ import { Button } from 'reactstrap';
 import AutosizeTextarea from 'react-textarea-autosize';
 import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 function App() {
@@ -232,12 +233,12 @@ function App() {
 
     <div className='divFca'>
       <div className='header'>
-        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2b/Logomarca_Intelbras_verde.png" />
+        <img className="imgHeader" src="https://upload.wikimedia.org/wikipedia/commons/2/2b/Logomarca_Intelbras_verde.png" />
       </div>
-      <div className='divPrincipal'>
-        <div className='divEsq'>
-          <div className='divCenario'>
-            <p className='sceneText'>Cenário:</p>
+      <div className='container'>
+        <div className='row'>
+          <div className='col-lg-4 flex-column align-items-start'>
+            <p className=''>Cenário:</p>
             <div className='alignScene'>
               <div className='divEquips'>
                 {equipamentos.map((select, index) => (
@@ -279,47 +280,46 @@ function App() {
               </div>
             </div>
           </div>
-        </div>
-        <div className='divDir'>
-          <div className='divFato'>
-            <div id='valor1'>
-              <CreatableSelect
-                formatCreateLabel={(inputValue) => `Adicionar: "${inputValue}"`}
-                isClearable
-                placeholder="Fato:"
-                value={valorSelecionado}
-                onChange={handleChange}
-                options={opcoesFato}
-              />
-              <p ></p>
+          <div className='col-lg-8'>
+            <div className=''>
+              <div id='valor1'>
+                <CreatableSelect
+                  formatCreateLabel={(inputValue) => `Adicionar: "${inputValue}"`}
+                  isClearable
+                  placeholder="Fato:"
+                  value={valorSelecionado}
+                  onChange={handleChange}
+                  options={opcoesFato}
+                />
+                <p ></p>
+              </div>
+              <div id='valor2'>
+                <CreatableSelect
+                  formatCreateLabel={(inputValue) => `Adicionar: "${inputValue}"`}
+                  isClearable
+                  placeholder="Causa:"
+                  value={valorSelecionado2}
+                  onChange={handleChange2}
+                  options={opcoesCausa}
+                />
+              </div>
             </div>
-            <div id='valor2'>
-              <CreatableSelect
-                formatCreateLabel={(inputValue) => `Adicionar: "${inputValue}"`}
-                isClearable
-                placeholder="Causa:"
-                value={valorSelecionado2}
-                onChange={handleChange2}
-                options={opcoesCausa}
-              />
+            <div className='divAcao' >
+              <AutosizeTextarea id="valor3" onChange={handleChange3} value={text} className='textarea' minRows={10} tabIndex="1" placeholder=' Ação: ' />
             </div>
-
           </div>
-          <div className='divAcao' >
-            <AutosizeTextarea id="valor3" onChange={handleChange3} value={text} className='textarea' minRows={10} tabIndex="1" placeholder=' Ação: ' />
+        </div>
+        <div className='divButton' >
+          <div>
+            <Button color="success" onClick={refreshPage} className="me-3">Limpar tela</Button>
+          </div>
+          <div>
+            <Button color="success" onClick={handleCopy} >Copiar dados</Button>
           </div>
         </div>
       </div>
-      <div className='divButton' >
-        <div>
-          <Button color="success" onClick={refreshPage}>Limpar tela</Button>
-        </div>
-        <div>
-          <Button color="success" onClick={handleCopy} >Copiar dados</Button>
-        </div>
-      </div>
+    </div>
 
-    </div >
   );
 }
 
