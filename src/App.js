@@ -12,6 +12,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 function App() {
   function getCaretCoordinates(input, selectionPoint) {
     var context = document.createElement("div");
+    context.style.position = "relative"; 
     context.style.visibility = "hidden";
     context.style.whiteSpace = "pre-wrap";
     context.style.wordWrap = "break-word";
