@@ -12,7 +12,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 function App() {
   function getCaretCoordinates(input, selectionPoint) {
     var context = document.createElement("div");
-    context.style.position = "relative"; 
+    context.style.position = "relative";
     context.style.visibility = "hidden";
     context.style.whiteSpace = "pre-wrap";
     context.style.wordWrap = "break-word";
@@ -34,7 +34,7 @@ function App() {
     return coordinates;
   }
   function split(val) {
-    return val.split(/;\s*/);
+    return val.split(/ \s*/);
   }
   function extractLast(term) {
     return split(term).pop();
@@ -106,11 +106,9 @@ function App() {
       },
       select: function (event, ui) {
         if (ui && ui.item) {
-          var cursorPosition = this.selectionStart;
-          var lastSpacePosition = this.value.lastIndexOf('\n', cursorPosition);
-          var textBeforeCursor = this.value.substring(0, lastSpacePosition + 1);
-          var textAfterCursor = this.value.substring(cursorPosition);
-          this.value = textBeforeCursor + ui.item.value + ";" + "\n" + textAfterCursor;
+          var lastTerm = extractLast(this.value);
+          this.value = this.value.substring(0, this.value.length - lastTerm.length);
+          insertAtCaret(this, ui.item.value + " ");
           $(this).trigger('focusout');
           event.preventDefault();
           return false;
