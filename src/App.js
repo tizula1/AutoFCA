@@ -20,6 +20,7 @@ function App() {
     context.style.font = getComputedStyle(input).font;
     document.body.appendChild(context);
 
+
     context.textContent = input.value.substring(0, selectionPoint);
     var span = document.createElement("span");
     span.textContent = input.value.substring(selectionPoint) || ".";
@@ -34,7 +35,7 @@ function App() {
     return coordinates;
   }
   function split(val) {
-    return val.split(/ \s*/);
+     return val.split(/[\s\n]+/);
   }
   function extractLast(term) {
     return split(term).pop();
@@ -100,15 +101,23 @@ function App() {
           top: caretPos.top + $(this).scrollTop() + $(this).offset().top,
           left: caretPos.left + $(this).offset().left
         });
+        var autocomplete = $(this).data("ui-autocomplete");
+        if (autocomplete && autocomplete.menu && autocomplete.menu.element) {
+          var firstItem = autocomplete.menu.element.children().first();
+          firstItem.addClass("ui-state-focus");
+          autocomplete.menu.focus(null, firstItem);
+        }
       },
       focus: function (event, ui) {
+        $(".ui-state-focus").removeClass("ui-state-focus");
+        $(event.target).data("ui-autocomplete").menu.element.children().first().addClass("ui-state-focus");
         return false;
       },
       select: function (event, ui) {
         if (ui && ui.item) {
           var lastTerm = extractLast(this.value);
           this.value = this.value.substring(0, this.value.length - lastTerm.length);
-          insertAtCaret(this, ui.item.value + " ");
+          insertAtCaret(this, ui.item.value + `\n`);
           $(this).trigger('focusout');
           event.preventDefault();
           return false;
@@ -228,6 +237,12 @@ function App() {
     setConexoes([...conexoes, {}]);
     setConexaoValues([...conexaoValues, null]);
   };
+  const handleKeyDown = (event) => {
+    if (event.key === 'Tab') {
+      event.preventDefault();
+      return false
+    }
+  };
   return (
 
     <div className='divFca'>
@@ -304,7 +319,7 @@ function App() {
               </div>
             </div>
             <div className='divAcao' >
-              <AutosizeTextarea id="valor3" onChange={handleChange3} value={text} className='textarea' minRows={10} tabIndex="1" placeholder=' Ação: ' />
+              <AutosizeTextarea id="valor3" onChange={handleChange3} value={text} className='textarea' minRows={10} tabIndex="1" placeholder=' Ação: ' onKeyDown={handleKeyDown} />
             </div>
           </div>
         </div>
@@ -323,3 +338,4 @@ function App() {
 }
 
 export default App;
+
