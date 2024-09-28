@@ -18,7 +18,7 @@ const Login = () => {
     const repoName = 'auto-fca';
     const folderName = `Registros/${matricula}`;
     const content = btoa('Este é o arquivo README para a matrícula ' + matricula);
-    const token = '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';
+    const token = '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';
     const checkFolderUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${folderName}`;
     const defaultFolderUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/Registros/default`;
     try {
