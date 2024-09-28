@@ -19,7 +19,7 @@ const Login = () => {
     const folderName = `Registros/${matricula}`;
     const content = btoa('Este é o arquivo README para a matrícula ' + matricula);
     const token = process.env.GITHUB_TOKEN;
-    console.log(token);
+    console.log('GITHUB_TOKEN:', process.env.GITHUB_TOKEN);
     const checkFolderUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${folderName}`;
     const defaultFolderUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/Registros/default`;
     try {
