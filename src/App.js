@@ -4,12 +4,146 @@ import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import { Button } from 'reactstrap';
 import AutosizeTextarea from 'react-textarea-autosize';
+import { useLocation } from 'react-router-dom';
 import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import sunIcon from './assets/sun.png'; // Novo caminho para o ícone do sol
+import moonIcon from './assets/moon.png';
 
 
 function App() {
+  const toggleTheme = () => {
+    document.body.classList.toggle('dark-theme');
+    setIsDarkTheme(!isDarkTheme);
+  };
+  const [isDarkTheme, setIsDarkTheme] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [mensagem, setMensagem] = useState('');
+  const location = useLocation();
+  const matricula = location.state?.matricula;
+  const token = location.state?.token;
+  const urlGit = `https://api.github.com/repos/tizula1/auto-fca/contents/Registros/${matricula}`;
+  const [text, setText] = useState('');
+  const [valorSelecionado, setValorSelecionado] = useState('');
+  const [valorSelecionado2, setValorSelecionado2] = useState('');
+  const [opcoesCausa, setOpcoesCausa] = useState([]);
+  const [opcoesFato, setOpcoesFato] = useState([]);
+  const [opcoesEquips, setOpcoesEquips] = useState([]);
+  const [opcoesConex, setOpcoesConex] = useState([]);
+  const [equipamentos, setEquipamentos] = useState([{}]);
+  const [conexoes, setConexoes] = useState([{}]);
+  const [equipamentoValues, setEquipamentoValues] = useState([]);
+  const [conexaoValues, setConexaoValues] = useState([]);
+  var originalValue = '';
+  const handleCloseMessage = () => {
+    setMensagem('');
+  };
+  const cacheFetch = async (url, cacheKey, token) => {
+    const cachedData = localStorage.getItem(cacheKey);
+    const cachedTimestamp = localStorage.getItem(`${cacheKey}_timestamp`);
+    const cacheExpiration = 20 * 60 * 1000;
+    if (cachedData && cachedTimestamp && (Date.now() - cachedTimestamp < cacheExpiration)) {
+      return JSON.parse(cachedData); // Retorna os dados do cache
+    }
+    const response = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) throw new Error("Erro ao buscar conteúdo do arquivo");
+    const data = await response.json();
+    const decodedData = atob(data.content);
+    const utf8Data = decodeURIComponent(escape(decodedData));
+    const jsonData = JSON.parse(utf8Data);
+    localStorage.setItem(cacheKey, JSON.stringify(jsonData));
+    localStorage.setItem(`${cacheKey}_timestamp`, Date.now());
+
+    return jsonData;
+  };
+  $("#valor3")
+    .on("select", function (event, ui) {
+      if (ui && ui.item && $(".textarea").val() != ui.item.value) {
+        $(".textarea").val($(".textarea").val() + " " + ui.item.value);
+      }
+    })
+    .autocomplete({
+      minLength: 3,
+      multiple: true,
+      source: async function (request, response) {
+        try {
+          const jsonData = await cacheFetch(urlGit + '/acoes.json', 'acoes', token);
+          response($.ui.autocomplete.filter(jsonData.acoes, extractLast(request.term)));
+        } catch (error) {
+          console.error("Erro ao buscar dados de ações:", error);
+        }
+      },
+      open: function () {
+        var caretPos = getCaretCoordinates(this, this.selectionEnd);
+        $(".ui-autocomplete").css({
+          top: caretPos.top + $(this).scrollTop() + $(this).offset().top,
+          left: caretPos.left + $(this).offset().left
+        });
+        var autocomplete = $(this).data("ui-autocomplete");
+        if (autocomplete && autocomplete.menu && autocomplete.menu.element) {
+          var firstItem = autocomplete.menu.element.children().first();
+          firstItem.addClass("ui-state-focus");
+          autocomplete.menu.focus(null, firstItem);
+        }
+      },
+      focus: function (event, ui) {
+        $(".ui-state-focus").removeClass("ui-state-focus");
+        $(event.target).data("ui-autocomplete").menu.element.children().first().addClass("ui-state-focus");
+        return false;
+      },
+      select: function (event, ui) {
+        if (ui && ui.item) {
+          var lastTerm = extractLast(this.value);
+          this.value = this.value.substring(0, this.value.length - lastTerm.length);
+          insertAtCaret(this, ui.item.value + `\n`);
+          $(this).trigger('focusout');
+          event.preventDefault();
+          return false;
+        }
+      },
+      close: function (event, ui) {
+        this.value = originalValue + this.value;
+        $(this).autocomplete("option", "minLength", 3);
+      }
+    });
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const fatosData = await cacheFetch(urlGit + '/fatos.json?token=' + token, 'fatos', token);
+        const opcoesFatos = fatosData.fatos.map(item => ({
+          value: item,
+          label: item
+        }));
+        setOpcoesFato(opcoesFatos);
+        const causasData = await cacheFetch(urlGit + '/causas.json?token=' + token, 'causas', token);
+        const opcoesCausas = causasData.causas.map(item => ({
+          value: item,
+          label: item
+        }));
+        setOpcoesCausa(opcoesCausas);
+        const equipsData = await cacheFetch(urlGit + '/equipamentos.json?token=' + token, 'equipamentos', token);
+        const opcoesEquips = equipsData.equipamentos.map(item => ({
+          value: item,
+          label: item
+        }));
+        setOpcoesEquips(opcoesEquips);
+        const conexoesData = await cacheFetch(urlGit + '/conexoes.json?token=' + token, 'conexoes', token);
+        const opcoesConex = conexoesData.conexoes.map(item => ({
+          value: item,
+          label: item
+        }));
+        setOpcoesConex(opcoesConex);
+      } catch (error) {
+        console.error("Erro ao buscar dados:", error);
+      }
+    };
+    fetchData();
+  }, [token]);
   function getCaretCoordinates(input, selectionPoint) {
     var context = document.createElement("div");
     context.style.position = "relative";
@@ -20,25 +154,26 @@ function App() {
     context.style.font = getComputedStyle(input).font;
     document.body.appendChild(context);
 
+
     context.textContent = input.value.substring(0, selectionPoint);
     var span = document.createElement("span");
     span.textContent = input.value.substring(selectionPoint) || ".";
     context.appendChild(span);
 
     var coordinates = {
-      top: span.offsetTop + span.offsetHeight,
+      top: span.offsetTop + span.offsetHeight + 10,
       left: span.offsetLeft
     };
     document.body.removeChild(context);
 
     return coordinates;
-  }
+  };
   function split(val) {
-    return val.split(/ \s*/);
-  }
+    return val.split(/[\s\n]+/);
+  };
   function extractLast(term) {
     return split(term).pop();
-  }
+  };
   function insertAtCaret(input, text) {
     var scrollPos = input.scrollTop;
     var pos = 0;
@@ -70,131 +205,23 @@ function App() {
       input.focus();
     }
     input.scrollTop = scrollPos;
-  }
-
-  var originalValue = '';
-  $("#valor3")
-    .on("select", function (event, ui) {
-      if (ui && ui.item && $(".textarea").val() != ui.item.value) {
-        $(".textarea").val($(".textarea").val() + " " + ui.item.value);
-      }
-    })
-    .autocomplete({
-      minLength: 3,
-      multiple: true,
-      source: function (request, response) {
-        $.ajax({
-          url: "https://tizula1.github.io/auto-fca/redes/acao.json",
-          dataType: "json",
-          data: {
-            term: extractLast(request.term)
-          },
-          success: function (data) {
-            response($.ui.autocomplete.filter(data.acoes, extractLast(request.term)));
-          }
-        });
-      },
-      open: function () {
-        var caretPos = getCaretCoordinates(this, this.selectionEnd);
-        $(".ui-autocomplete").css({
-          top: caretPos.top + $(this).scrollTop() + $(this).offset().top,
-          left: caretPos.left + $(this).offset().left
-        });
-      },
-      focus: function (event, ui) {
-        return false;
-      },
-      select: function (event, ui) {
-        if (ui && ui.item) {
-          var lastTerm = extractLast(this.value);
-          this.value = this.value.substring(0, this.value.length - lastTerm.length);
-          insertAtCaret(this, ui.item.value + " ");
-          $(this).trigger('focusout');
-          event.preventDefault();
-          return false;
-        }
-      },
-      close: function (event, ui) {
-        this.value = originalValue + this.value;
-      }
-    });
-
-
-
-  const [text, setText] = useState('');
-  const [valorSelecionado, setValorSelecionado] = useState('');
-  const [valorSelecionado2, setValorSelecionado2] = useState('');
-
-  const [opcoesCausa, setOpcoesCausa] = useState([]);
-  const [opcoesFato, setOpcoesFato] = useState([]);
-  const [opcoesEquips, setOpcoesEquips] = useState([]);
-  const [opcoesConex, setOpcoesConex] = useState([]);
-
-  useEffect(() => {
-    $.ajax({
-      url: 'https://tizula1.github.io/auto-fca/redes/fato.json',
-      method: 'GET',
-      success: function (data) {
-        const opcoes = data.fatos.map(item => ({
-          value: item,
-          label: item
-        }));
-        setOpcoesFato(opcoes);
-      }
-    });
-    $.ajax({
-      url: 'https://tizula1.github.io/auto-fca/redes/causa.json',
-      method: 'GET',
-      success: function (data) {
-        const opcoes = data.causas.map(item => ({
-          value: item,
-          label: item
-        }));
-        setOpcoesCausa(opcoes);
-      }
-    });
-    $.ajax({
-      url: 'https://tizula1.github.io/auto-fca/redes/equip.json',
-      method: 'GET',
-      success: function (data) {
-        const opcoes = data.equipamentos.map(item => ({
-          value: item,
-          label: item
-        }));
-        setOpcoesEquips(opcoes);
-      }
-    });
-    $.ajax({
-      url: 'https://tizula1.github.io/auto-fca/redes/conex.json',
-      method: 'GET',
-      success: function (data) {
-        const opcoes = data.conexoes.map(item => ({
-          value: item,
-          label: item
-        }));
-        setOpcoesConex(opcoes);
-      }
-    });
-
-
-  }, []);
-
-  const refreshPage = () => {
-    window.location.reload();
-  }
-
+  };
+  const clearFields = () => {
+    setEquipamentoValues(equipamentoValues.map(() => null));
+    setConexaoValues(conexaoValues.map(() => null));
+    setValorSelecionado(null);
+    setValorSelecionado2(null);
+    setText('');
+  };
   const handleChange = (novoValor) => {
     setValorSelecionado(novoValor);
   };
-
   const handleChange2 = (novoValor2) => {
     setValorSelecionado2(novoValor2);
   };
-
   const handleChange3 = (event) => {
     setText(event.target.value);
   };
-
   const handleCopy = () => {
     let values = '';
 
@@ -214,34 +241,187 @@ function App() {
 
     navigator.clipboard.writeText(textToCopy);
   }
-  const [equipamentos, setEquipamentos] = useState([{}]);
-  const [conexoes, setConexoes] = useState([{}]);
-  const [equipamentoValues, setEquipamentoValues] = useState([]);
-  const [conexaoValues, setConexaoValues] = useState([]);
-
   const addEquipamento = () => {
     setEquipamentos([...equipamentos, {}]);
     setEquipamentoValues([...equipamentoValues, null]);
   };
-
+  const removeEquipamento = () => {
+    if (equipamentos.length > 1) {
+      setEquipamentos(equipamentos.slice(0, -1));
+      setEquipamentoValues(equipamentoValues.slice(0, -1));
+    } else {
+      alert("Não há mais equipamentos para remover.");
+    }
+  };
   const addConexao = () => {
     setConexoes([...conexoes, {}]);
     setConexaoValues([...conexaoValues, null]);
   };
-  return (
+  const removeConexao = () => {
+    if (conexoes.length > 1) {
+      setConexoes(conexoes.slice(0, -1));
+      setConexaoValues(conexaoValues.slice(0, -1));
+    } else {
+      alert("Não há mais conexões para remover.");
+    }
+  };
+  const handleKeyDown = (event) => {
+    if (event.key === 'Tab') {
+      event.preventDefault();
+      return false
+    }
+  };
+  const adicionarNovasLinhas = async () => {
+    const novoFato = valorSelecionado?.value || '';
+    const novaCausa = valorSelecionado2?.value || '';
+    const novaAcao = text.trim();
+    const novoEquipamento = equipamentoValues.map(e => e?.value).join(', ');
+    const novaConexao = conexaoValues.map(c => c?.value).join(', ');
+    setLoading(true);
+    setMensagem('');
+    try {
+      const acoesResponse = novaAcao ? await atualizarAcoes(novaAcao) : null;
+      const equipamentosResponse = novoEquipamento ? await atualizarArquivo(`${urlGit}/equipamentos.json`, 'equipamentos', novoEquipamento) : null;
+      const conexoesResponse = novaConexao ? await atualizarArquivo(`${urlGit}/conexoes.json`, 'conexoes', novaConexao) : null;
+      const causasResponse = novaCausa ? await atualizarArquivo(`${urlGit}/causas.json`, 'causas', novaCausa) : null;
+      const fatosResponse = novoFato ? await atualizarArquivo(`${urlGit}/fatos.json`, 'fatos', novoFato) : null;
+    } catch (error) {
+      console.error("Erro ao adicionar novas linhas:", error);
+      setMensagem('Erro ao adicionar novas linhas.');
+    } finally {
+      setLoading(false);
+    }
+  };
+  const atualizarAcoes = async (acoes) => {
+    const acoesSeparadas = acoes.split(/;\s*|\.\s*/);
+    for (const acao of acoesSeparadas) {
+      const acaoTrimmed = acao.trim();
+      if (acaoTrimmed) {
+        await atualizarArquivo(`${urlGit}/acoes.json`, 'acoes', acaoTrimmed);
+      }
+    }
+  };
+  const atualizarArquivo = async (urlArquivo, campoArray, novoConteudo) => {
+    const response = await fetch(urlArquivo, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    if (!response.ok) throw new Error("Erro ao buscar conteúdo do arquivo");
+    const data = await response.json();
+    const decodedData = atob(data.content);
+    const utf8Data = decodeURIComponent(escape(decodedData));
+    let jsonData = JSON.parse(utf8Data);
+    if (!Array.isArray(jsonData[campoArray])) {
+      throw new Error(`Formato inválido: '${campoArray}' deve ser um array`);
+    }
+    const jaExiste = novoConteudo && jsonData[campoArray].some(item => item === novoConteudo);
+    if (!jaExiste && novoConteudo) {
+      jsonData[campoArray].push(novoConteudo);
+      const novoTexto = JSON.stringify(jsonData, null, 2);
+      const updateResponse = await fetch(urlArquivo, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: `Adicionando novo conteúdo em ${campoArray}`,
+          content: btoa(unescape(encodeURIComponent(novoTexto))),
+          sha: data.sha
+        })
+      });
 
+      if (!updateResponse.ok) throw new Error("Erro ao atualizar o arquivo");
+      setMensagem('Dados adicionados com sucesso!');
+    } else {
+      setMensagem(`O conteúdo '${novoConteudo}' já existe`);
+    }
+  };
+  const lightThemeStyles = {
+    control: (styles) => ({
+      ...styles,
+      backgroundColor: '#FFFFFF',
+      color: '#000000',
+      borderColor: '#CCCCCC',
+    }),
+    menu: (styles) => ({
+      ...styles,
+      backgroundColor: '#FFFFFF',
+      color: '#000000',
+    }),
+    option: (styles, { isFocused }) => ({
+      ...styles,
+      backgroundColor: isFocused ? '#F0F0F0' : '#FFFFFF',
+      color: '#000000',
+    }),
+    singleValue: (styles) => ({
+      ...styles,
+      color: '#000000',
+    }),
+  };
+  const darkThemeStyles = {
+    control: (styles, { isFocused }) => ({
+      ...styles,
+      backgroundColor: '#1E1E1E',
+      color: '#FFFFFF',
+      borderColor: isFocused ? '#02aa4d' : '#02aa4d',
+      boxShadow: 'none',
+    }),
+    menu: (styles) => ({
+      ...styles,
+      backgroundColor: '#1E1E1E',
+      color: '#FFFFFF',
+    }),
+    option: (styles, { isFocused }) => ({
+      ...styles,
+      backgroundColor: isFocused ? '#3B3B3B' : '#1E1E1E',
+      color: '#FFFFFF',
+    }),
+    singleValue: (styles) => ({
+      ...styles,
+      color: '#FFFFFF',
+    }),
+    input: (styles) => ({
+      ...styles,
+      color: '#FFFFFF',
+    }),
+  };
+  return (
     <div className='divFca'>
+      <button onClick={toggleTheme} className="theme-toggle-button">
+        <img
+          src={isDarkTheme ? sunIcon : moonIcon}
+          alt={isDarkTheme ? 'Trocar para tema claro' : 'Trocar para tema escuro'}
+          style={{ width: '24px', height: '24px' }}
+        />
+      </button>
+      <div>
+        {loading && (
+          <div className="overlay">
+            <div className="spinner"></div>
+          </div>
+        )}
+        {mensagem && (
+          <div className="modal-overlay" onClick={handleCloseMessage}>
+            <div className="modal-message">
+              {mensagem}
+            </div>
+          </div>
+        )}
+
+      </div>
       <div className='header'>
         <img className="imgHeader" src="https://upload.wikimedia.org/wikipedia/commons/2/2b/Logomarca_Intelbras_verde.png" />
       </div>
       <div className='container'>
         <div className='row'>
           <div className='col-lg-4 flex-column align-items-start'>
-            <p className=''>Cenário:</p>
             <div className='alignScene'>
               <div className='divEquips'>
                 {equipamentos.map((select, index) => (
                   <CreatableSelect
+                    styles={isDarkTheme ? darkThemeStyles : lightThemeStyles}
                     key={index}
                     isClearable
                     placeholder="Equipamentos"
@@ -257,10 +437,12 @@ function App() {
                   />
                 ))}
                 <button onClick={addEquipamento} className='botaoCenario'>Adicionar equipamento</button>
+                <button onClick={removeEquipamento} className='botaoCenario'>Remover equipamento</button>
               </div>
               <div className='divConexoes'>
                 {conexoes.map((select, index) => (
                   <CreatableSelect
+                    styles={isDarkTheme ? darkThemeStyles : lightThemeStyles}
                     key={index}
                     isClearable
                     placeholder="Conexões"
@@ -276,6 +458,7 @@ function App() {
                   />
                 ))}
                 <button onClick={addConexao} className='botaoCenario'>Adicionar conexão</button>
+                <button onClick={removeConexao} className='botaoCenario'>Remover conexão</button>
               </div>
             </div>
           </div>
@@ -283,6 +466,7 @@ function App() {
             <div className=''>
               <div id='valor1'>
                 <CreatableSelect
+                  styles={isDarkTheme ? darkThemeStyles : lightThemeStyles}
                   formatCreateLabel={(inputValue) => `Adicionar: "${inputValue}"`}
                   isClearable
                   placeholder="Fato:"
@@ -294,6 +478,7 @@ function App() {
               </div>
               <div id='valor2'>
                 <CreatableSelect
+                  styles={isDarkTheme ? darkThemeStyles : lightThemeStyles}
                   formatCreateLabel={(inputValue) => `Adicionar: "${inputValue}"`}
                   isClearable
                   placeholder="Causa:"
@@ -304,13 +489,16 @@ function App() {
               </div>
             </div>
             <div className='divAcao' >
-              <AutosizeTextarea id="valor3" onChange={handleChange3} value={text} className='textarea' minRows={10} tabIndex="1" placeholder=' Ação: ' />
+              <AutosizeTextarea id="valor3" onChange={handleChange3} value={text} className='textarea' minRows={10} tabIndex="1" placeholder=' Ação: ' onKeyDown={handleKeyDown} />
             </div>
           </div>
         </div>
         <div className='divButton' >
           <div>
-            <Button color="success" onClick={refreshPage} className="me-3">Limpar tela</Button>
+            <Button color="success" onClick={adicionarNovasLinhas}>Adicionar Dados</Button>
+          </div>
+          <div>
+            <Button color="success" onClick={clearFields} className="me-3">Limpar tela</Button>
           </div>
           <div>
             <Button color="success" onClick={handleCopy} >Copiar dados</Button>

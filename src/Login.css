@@ -1,0 +1,97 @@
+
+.login-container {
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    max-width: 400px;
+    margin: 20px auto;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+
+  .login-container h2 {
+    text-align: center;
+    color: #02aa4d;
+    margin-bottom: 20px;
+  }
+  
+ 
+  .login-container .form-group {
+    width: 100%;
+    margin-bottom: 15px;
+  }
+  
+
+  .login-container button {
+    border-color: #02aa4d;
+    background-color: #02aa4d;
+    color: #ffffff;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    padding: 10px 20px;
+    border-radius: 5px;
+    transition: background-color 0.2s ease-in-out;
+    width: 100%;
+  }
+
+  .login-container button:hover {
+    border-color: #02aa4d;
+    background-color: #90ee90;
+  }
+  
+  /* Estilo para o input */
+  .login-container input {
+    padding: 10px;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+  
+  .login-container input:focus {
+    border-color: #02aa4d;
+    outline: none;
+  }
+  
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+  
+  .spinner {
+    border: 8px solid rgba(0, 0, 0, 0.1);
+    border-top: 8px solid green;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .login-container {
+      padding: 15px;
+      width: 90%;
+    }
+  }

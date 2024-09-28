@@ -3,8 +3,13 @@
   width: 98.5%;
   resize: none;
   border-radius: 5px;
+  border: 1px solid #ccc;
 }
-
+.theme-toggle-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
 .divPrincipal {
   display: flex;
   align-items: center;
@@ -23,11 +28,19 @@
   padding-left: 10px;
 }
 
+.creatableSelect {
+  margin-bottom: 10px;
+}
+
 .divEquips {
   border: 1px solid #ccc;
   border-radius: 10px;
   margin: 5px;
   max-width: 50%;
+  display: flex;               
+  flex-direction: column;
+  align-items: center;
+  padding: 10px; 
 }
 
 .divConexoes {
@@ -35,18 +48,22 @@
   border-radius: 10px;
   margin: 5px;
   max-width: 50%;
+  display: flex;           
+  flex-direction: column;
+  align-items: center;
+  padding: 10px; 
 }
 
 .botaoCenario {
+  justify-content: center;
   background-color: #02aa4d;
   color: #ffffff;
   font-family: Arial, sans-serif;
   font-size: 12px;
-  border: 1px solid #0077b5;
   padding: 3px 5px;
   border-radius: 5px;
   transition: background-color 0.2s ease-in-out;
-  margin: 10px 10px;
+  margin: 5px 10px;
 }
 
 .divAcao {
@@ -79,10 +96,13 @@
 
 
 .divButton {
-  padding: 10px;
+  padding: 20px;
   display: flex;
+  gap: 20px;
   justify-content: center;
-
+}
+.divButton > button {
+  margin: 0 20px;
 }
 
 .ui-helper-hidden-accessible {
@@ -128,7 +148,7 @@
 }
 
 .ui-autocomplete .ui-state-active {
-  background-color: #90ee90;
+  background-color: #555;
   width: 100%;
 }
 
@@ -152,7 +172,7 @@ ul li {
 }
 
 ul li:hover {
-  background-color: #90ee90;
+  background-color: #555;
 }
 
 button {
@@ -160,7 +180,6 @@ button {
   color: #ffffff;
   font-family: Arial, sans-serif;
   font-size: 16px;
-  border: 1px solid #0077b5;
   padding: 10px 20px;
   border-radius: 5px;
   transition: background-color 0.2s ease-in-out;
@@ -168,5 +187,102 @@ button {
 }
 
 button:hover {
+  border-color: #02aa4d;
   background-color: #90ee90;
+}
+
+.spinner {
+  border: 8px solid rgba(0, 0, 0, 0.1);
+  border-top: 8px solid green;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+.modal-message {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  font-size: 1.0rem;
+  box-shadow: 0 2px 10px rgba(15, 58, 28, 0.1);
+  color: green;
+}
+.dark-theme {
+  background-color: #1E1E1E;
+  color: #FFFFFF;
+}
+
+.dark-theme input,
+.dark-theme textarea {
+  background-color: #1E1E1E;
+  color: #FFFFFF;
+  border: 1px solid #333333;
+}
+
+.dark-theme button {
+  background-color: #02aa4d;
+  color: #FFFFFF;
+}
+
+.dark-theme button:hover {
+  background-color: #90ee90;
+}
+
+.dark-theme textarea {
+  border: 2px solid #02aa4d;
+}
+
+.dark-theme .theme-toggle-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.dark-theme .ui-autocomplete{
+  background-color: #333;
+  border: 1px solid #555;
+  box-shadow: 0px 4px 6px rgba(255, 255, 255, 0.1);
+}
+.dark-theme .ui-autocomplete > li {
+  color: #fff;
+  background-color: #444;
+  cursor: pointer;
+  border: none
+}
+
+.dark-theme .container, 
+.dark-theme .divAcao, 
+.dark-theme .divConexoes, 
+.dark-theme .divEquips{
+  border: 1px solid #02aa4d;
 }
