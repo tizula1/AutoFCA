@@ -37,6 +37,7 @@ const Login = () => {
           method: 'PUT',
           headers: {
             'Authorization': `Bearer ${token}`,
+            'User-Agent': 'AutoFCA',
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
@@ -65,6 +66,7 @@ const Login = () => {
                 method: 'PUT',
                 headers: {
                   'Authorization': `Bearer ${token}`,
+                  'User-Agent': 'AutoFCA',
                   'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
