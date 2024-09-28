@@ -8,7 +8,7 @@ import { useLocation } from 'react-router-dom';
 import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import sunIcon from './assets/sun.png'; // Novo caminho para o ícone do sol
+import sunIcon from './assets/sun.png';
 import moonIcon from './assets/moon.png';
 
 
@@ -44,11 +44,12 @@ function App() {
     const cachedTimestamp = localStorage.getItem(`${cacheKey}_timestamp`);
     const cacheExpiration = 20 * 60 * 1000;
     if (cachedData && cachedTimestamp && (Date.now() - cachedTimestamp < cacheExpiration)) {
-      return JSON.parse(cachedData); // Retorna os dados do cache
+      return JSON.parse(cachedData);
     }
     const response = await fetch(url, {
       headers: {
         'Authorization': `Bearer ${token}`,
+        'User-Agent': 'AutoFCA',
       },
     });
     if (!response.ok) throw new Error("Erro ao buscar conteúdo do arquivo");
