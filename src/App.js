@@ -51,6 +51,20 @@ function App() {
         'Authorization': `Bearer ${token}`,
         'User-Agent': 'AutoFCA',
       },
+      body: JSON.stringify({
+        message: "Atualizando arquivo",
+        content: btoa(content),
+        sha: 'sha-do-arquivo',
+        committer: {
+          name: "tizula1",
+          email: "souza.gui2002@gmail.com"
+        },
+        author: {
+          name: "tizula1",
+          email: "souza.gui2002@gmail.com"
+        },
+      })
+    });
     });
     if (!response.ok) throw new Error("Erro ao buscar conteúdo do arquivo");
     const data = await response.json();
