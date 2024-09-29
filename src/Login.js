@@ -44,6 +44,12 @@ const Login = () => {
           body: JSON.stringify({
             message: `Criando README.md para a matrícula ${matricula}`,
             committer: {
+              name: "tizula1",
+              email: "souza.gui2002@gmail.com"
+            },
+            author: {
+              name: "tizula1",
+              email: "souza.gui2002@gmail.com"
             },
             content: content
           })
