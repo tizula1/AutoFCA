@@ -65,7 +65,6 @@ function App() {
         },
       })
     });
-    });
     if (!response.ok) throw new Error("Erro ao buscar conteúdo do arquivo");
     const data = await response.json();
     const decodedData = atob(data.content);
