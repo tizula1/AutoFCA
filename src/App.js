@@ -50,17 +50,7 @@ function App() {
       headers: {
         'Authorization': `Bearer ${token}`,
         'User-Agent': 'AutoFCA',
-      },
-      body: JSON.stringify({
-        committer: {
-          name: "tizula1",
-          email: "souza.gui2002@gmail.com"
-        },
-        author: {
-          name: "tizula1",
-          email: "souza.gui2002@gmail.com"
-        },
-      })
+      }
     });
     if (!response.ok) throw new Error("Erro ao buscar conteúdo do arquivo");
     const data = await response.json();
@@ -339,7 +329,15 @@ function App() {
         body: JSON.stringify({
           message: `Adicionando novo conteúdo em ${campoArray}`,
           content: btoa(unescape(encodeURIComponent(novoTexto))),
-          sha: data.sha
+          sha: data.sha,
+          committer: {
+            name: "tizula1",
+            email: "souza.gui2002@gmail.com"
+          },
+          author: {
+            name: "tizula1",
+            email: "souza.gui2002@gmail.com"
+          },
         })
       });
 
