@@ -78,8 +78,8 @@ const Login = () => {
                 body: JSON.stringify({
                   message: `Copiando arquivo ${fileName} para a matrícula ${matricula}`,
                   committer: {
-                    name: 'Seu Nome',
-                    email: 'seu-email@exemplo.com'
+                    name: 'tizula1',
+                    email: 'souza.gui2002@gmail.com'
                   },
                   content: encodedContent
                 })
