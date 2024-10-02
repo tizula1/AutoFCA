@@ -74,8 +74,8 @@ function App() {
       source: async function (request, response) {
         try {
           const jsonData = await cacheFetch(urlGit + '/acoes.json', 'acoes', token);
-          const resultadosFiltrados = jsonData.acoes.filter(acao => acao === request.term);
-          response(resultadosFiltrados);
+          const filteredItems = items.filter(item => item.toLowerCase().startsWith(value.toLowerCase())
+          response(filteredItems);
         } catch (error) {
           console.error("Erro ao buscar dados de ações:", error);
         }
