@@ -74,7 +74,8 @@ function App() {
       source: async function (request, response) {
         try {
           const jsonData = await cacheFetch(urlGit + '/acoes.json', 'acoes', token);
-          response($.ui.autocomplete.filter(jsonData.acoes, extractLast(request.term)));
+          const resultadosFiltrados = jsonData.acoes.filter(acao => acao === request.term);
+          response(resultadosFiltrados);
         } catch (error) {
           console.error("Erro ao buscar dados de ações:", error);
         }
