@@ -74,8 +74,9 @@ function App() {
       source: async function (request, response) {
         try {
           const jsonData = await cacheFetch(urlGit + '/acoes.json', 'acoes', token);
-          const filteredItems = items.filter(item => item.toLowerCase().startsWith(value.toLowerCase())
-          response(filteredItems);
+          const term = extractLast(request.term);
+          const filteredResults = customFilter(jsonData.acoes, term);
+          response(filteredResults);
         } catch (error) {
           console.error("Erro ao buscar dados de ações:", error);
         }
@@ -146,6 +147,12 @@ function App() {
     };
     fetchData();
   }, [token]);
+  function customFilter(array, term) {
+    const lowerCaseTerm = term.toLowerCase().trim();
+    return array.filter(item =>
+      item.toLowerCase().startsWith(lowerCaseTerm)
+    );
+  }
   function getCaretCoordinates(input, selectionPoint) {
     var context = document.createElement("div");
     context.style.position = "relative";
