@@ -75,8 +75,12 @@ function App() {
         try {
           const jsonData = await cacheFetch(urlGit + '/acoes.json', 'acoes', token);
           const term = extractLast(request.term);
-          const filteredResults = customFilter(jsonData.acoes, term);
-          response(filteredResults);
+          if (term.length >= 3) {
+            const filteredResults = customFilter(jsonData.acoes, term);
+            response(filteredResults);
+          } else {
+            response([]);
+          }
         } catch (error) {
           console.error("Erro ao buscar dados de ações:", error);
         }
@@ -364,12 +368,12 @@ function App() {
     }),
     menu: (styles) => ({
       ...styles,
-      backgroundColor: '#FFFFFF',
+      backgroundColor: '#A9A9A9',
       color: '#000000',
     }),
     option: (styles, { isFocused }) => ({
       ...styles,
-      backgroundColor: isFocused ? '#F0F0F0' : '#FFFFFF',
+      backgroundColor: isFocused ? '#DCDCDC' : '#FFFFFF',
       color: '#000000',
     }),
     singleValue: (styles) => ({
