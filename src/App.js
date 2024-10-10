@@ -287,7 +287,7 @@ function App() {
   const adicionarNovasLinhas = async () => {
     const novoFato = valorSelecionado?.value || '';
     const novaCausa = valorSelecionado2?.value || '';
-    const novaAcao = text.trim();
+    const novaAcao = text.replace(/\s+/g, ' ').trim();
     const novoEquipamento = equipamentoValues.map(e => e?.value).join(', ');
     const novaConexao = conexaoValues.map(c => c?.value).join(', ');
     setLoading(true);
