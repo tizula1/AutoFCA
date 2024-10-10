@@ -182,8 +182,8 @@ function App() {
     return coordinates;
   };
   function split(val) {
-    return val.split(/[\s\n]+/);
-  };
+    return val.split(/[.,]+/).map(item => item.trim()).filter(Boolean);
+  }
   function extractLast(term) {
     return split(term).pop();
   };
